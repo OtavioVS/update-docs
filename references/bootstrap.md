@@ -70,6 +70,7 @@ run locates the contract, especially under a non-default name. It records the
 - **Map:** <path> — canonical. Skeleton: <list the ## sections chosen and why>.
 - **Deep dives:** <docs dir>/, naming convention: <match what the repo already uses>.
 - **Budgets:** map ≤ <n> lines; section ≤ ~40 lines body.
+- **Last audited:** <commit hash> (<date>) — updated by every audit (skill Checklist E).
 - **Mirrors:** <none | path + policy: what stays untranslated, sync-in-same-task rule>.
 - **Deep-dive header format:** Status: CURRENT | PLAN | HISTORICAL + summary pointer.
 - **UI/UX docs:** <n/a | simple mode: docs/uiux.md | full: docs/uiux/ + screens/>.

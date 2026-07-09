@@ -10,6 +10,7 @@ narratives, plans — no size limit).
 - Folding a just-landed feature or fix into the docs
 - Fixing docs that are stale or contradict the code
 - Reorganizing an oversized map (whole-block extraction to deep dives, soft line budgets)
+- Auditing docs against git history to catch undocumented drift incrementally
 - Documenting UI/UX decisions and visual changes, including a design-token workflow
 - Bootstrapping architecture docs in a project that has none
 
@@ -22,6 +23,6 @@ Copy this folder to `~/.claude/skills/update-docs` (or add it to a project's
 ## Layout
 
 - `SKILL.md` — the skill definition: doc-location discovery, task classification,
-  checklists A–D, verification steps, hard limits
+  checklists A–E, verification steps, hard limits
 - `references/bootstrap.md` — procedure for creating docs from scratch
 - `references/uiux.md` — UI/UX doc templates and the design-token bootstrap

@@ -60,6 +60,7 @@ its rules OVERRIDE these defaults.
 |---|---|
 | A feature/fix landed and docs must reflect it | Checklist A |
 | Docs found stale, wrong, or contradicting the code | Checklist B |
+| User asks for an audit / docs untouched for a while | Checklist E |
 | Map has grown too large / user asks to reorganize | Checklist C |
 | The change touches a user-facing surface (screen, component, style, flow, copy) | Checklist A **+ D** |
 | A pure UI/UX decision was made (no architecture impact) | Checklist D only |
@@ -69,6 +70,10 @@ its rules OVERRIDE these defaults.
 
 Work through every item; say explicitly which items were no-ops.
 
+0. **Establish ground truth first.** If the user's description doesn't fully specify what
+   changed, read the actual diff (`git diff`, the branch's recent commits) and enumerate
+   the changes before touching any doc. Document the code's reality, never the
+   description of it.
 1. **Find ALL affected locations, not just one.** A change usually touches several places:
    a lifecycle step, a trigger table row, a one-line summary, the file tree. Before editing
    anything, Grep the map for every keyword the change involves (function names, events,
@@ -84,6 +89,10 @@ Work through every item; say explicitly which items were no-ops.
    - new files → the file-structure section
 2. **Merge, never append.** Integrate into the existing section. Do NOT add a new
    top-level `##` section — that is exceptional and needs the user's approval.
+   - ✗ Append: adding `### Token refresh (new)` at a section's end while a paragraph
+     above still says "sessions expire after 60 min" — two contradictory homes.
+   - ✓ Merge: rewrite that existing paragraph in place to the new truth: "sessions
+     refresh every 45 min (→ `docs/session-refresh.md`)".
 3. **Write current state only.** No "SOLVED", no version tags, no "previously X, now Y".
    Rewrite the affected paragraph to describe how the system works *now*. Move the
    discovery story (old behavior, why it failed, logs) to the feature's deep dive.
@@ -100,6 +109,9 @@ Work through every item; say explicitly which items were no-ops.
    ```
 
    If a PLAN doc just shipped, flip its Status to CURRENT and fold its outcome into the map.
+   And whenever you edit a map section that already carries a deep-dive pointer, open that
+   deep dive's header and confirm its Status and TL;DR still match the new state — fix it
+   in this same task if not (deep dives have no other freshness mechanism).
 5. **Promote to a top rule only if it qualifies.** If the map has a rules/invariants
    section, add an entry only when breaking the invariant fails *silently* or
    *catastrophically* AND it is non-obvious. Keep that list under ~10 entries; build
@@ -122,8 +134,10 @@ Work through every item; say explicitly which items were no-ops.
    code — unless the doc records an *intended* behavior the code fails to deliver; in that
    case report the discrepancy to the user instead of silently rewriting either.
 2. Apply Checklist A items 3–8 to every paragraph you touch.
-3. Never delete a fact outright. Facts move (map → deep dive) or get corrected; if a fact
-   appears genuinely obsolete, list it in your final report as removed and why.
+3. Never delete a fact outright. Facts move (map → deep dive) or get corrected — and for
+   low-value detail, *move* is the right verb: relocate it per Checklist C item 2 rather
+   than keeping the map fat out of caution. If a fact appears genuinely obsolete, list it
+   in your final report as removed and why.
 
 ## Checklist C — reorganize an oversized map
 
@@ -189,26 +203,51 @@ templates and the token-bootstrap procedure: `references/uiux.md`.
 5. **Copy is spec.** UI strings appear verbatim in the screen doc's Copy column/table;
    changing a string IS a UI/UX decision and updates the doc in the same task.
 
+## Checklist E — audit (hunt for drift proactively)
+
+Run when the user asks for an audit/health check or the docs look unmaintained. Goal:
+find undocumented changes cheaply and incrementally — not reread everything.
+
+1. **Baseline.** Read `Last audited:` (commit + date) from the contract file. Missing →
+   first audit: use the map's last-edit commit (`git log -1 --format=%h -- <map path>`)
+   as the baseline.
+2. **Walk the gap.** `git log --oneline <baseline>..HEAD`, skipping merge and docs-only
+   commits. For each change, grep the map for its keywords; a change with no doc trace →
+   run Checklist A for it (batch related commits into one pass per feature).
+3. **Sample the map.** Pick ~5 concrete claims from different sections (function names,
+   flags, file paths, invariants) and verify each against the code. Any failure →
+   Checklist B.
+4. **Sample deep dives.** For each deep dive touched by items 2–3, plus ~2 others marked
+   CURRENT, check the TL;DR against the code; update it or demote Status to HISTORICAL.
+5. **Record.** Update the contract: `Last audited: <commit> (<date>)` plus one
+   decision-log line summarizing findings. This line is what keeps the next audit
+   incremental instead of full-history.
+
 ## Step 3 — Verify (always, before reporting)
 
 Every check below must be an **actually executed** tool call (Grep/Glob/Read/shell) made
 NOW, in this session. Never report a number or a "confirmed" you did not read from a tool
 result — a fabricated verification is worse than none. Quote the real result for each
-check in your report.
+check in your report. Scale the pass to the edit: conditional checks name their trigger —
+when the trigger didn't occur, skip the check and say so in one line; never skip a check
+whose trigger fired.
 
 1. Every relative link/path referenced in files you touched exists — check each with
    Glob/Read; list any that are missing and fix them.
 2. Count the map's lines and state the real number next to its budget. Within ~5% over →
    report it as met and move on. Meaningfully over → ONE whole-block extraction per
    Checklist C item 1; do not phrase-trim your way down.
-3. **Stale-phrase sweep:** Grep the map for the OLD behavior's distinctive wording (the
-   phrases you replaced). Zero hits expected — any hit is a spot you missed in step A1.
+3. **Stale-phrase sweep** (trigger: you replaced or reworded existing behavior text):
+   Grep the map for the OLD behavior's distinctive wording (the phrases you replaced).
+   Zero hits expected — any hit is a spot you missed in step A1.
 4. Grep the map for chronology markers you may have introduced or missed:
    `SOLVED`, `previously`, `v\d+\.\d+`, `TODO`. Justify or remove each hit in map text
    (deep dives may keep them).
-5. If a mirror exists: extract the `##`/`###` headings from both files, count them, and
-   confirm they correspond 1:1 in order and numbering — using the real extracted lists,
-   not an assumption.
+5. **Mirror headings** (trigger: a mirror exists AND headings or section numbering
+   changed): extract the `##`/`###` headings from both files, count them, and confirm
+   they correspond 1:1 in order and numbering — using the real extracted lists, not an
+   assumption. Content-only edits still require the A8 retranslation, just not this
+   heading comparison.
 6. If Checklist D ran in token mode: grep the screen/flow docs (everything under the
    UI/UX home except `design-tokens.md`) for raw value literals
    (`#[0-9a-fA-F]{3,8}\b`, `\b\d+(px|dp|pt)\b`) — zero hits expected; and confirm every
