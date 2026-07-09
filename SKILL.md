@@ -33,14 +33,25 @@ its rules OVERRIDE these defaults.
 3. Read the map's header (first ~15 lines). If it links to a rules/contract file (e.g.
    `documentingSkill.md`, `documentation-rules.md`), **read that file completely** — its
    project-specific rules override this skill's defaults.
-4. Note whether the map has sibling **translation mirrors** (e.g. `architecturePT-BR.md`).
+4. **No contract found → mandatory setup, never silent defaults.** If the header links no
+   contract and a Glob next to the map (`documentation-rules.md`, `documenting*.md`) finds
+   none, STOP and run the user through the documentation options before any editing:
+   contract file name & location, deep-dive folder & naming, budgets, mirror policy,
+   UI/UX mode & token set — the fields of the contract template in
+   `references/bootstrap.md` §4. Create the contract from the answers and **link it from
+   the map header** (plus a pointer in `CLAUDE.md` if one exists) — if the user picks a
+   non-default name, that recorded link is the ONLY way future runs will find it. This
+   gate also fires when the docs claim a structure that is missing on disk (e.g. the
+   declared deep-dive folder or a linked doc file doesn't exist): surface the gap and
+   settle it with the user before proceeding.
+5. Note whether the map has sibling **translation mirrors** (e.g. `architecturePT-BR.md`).
    If the contract declares a mirror policy, follow it; if a mirror exists with no policy,
    ask the user whether to keep syncing it before touching it.
-5. Note whether the project has **UI/UX docs** (default home: `docs/uiux/`) and a
+6. Note whether the project has **UI/UX docs** (default home: `docs/uiux/`) and a
    **design-token set** — a code-level token module (e.g. `src/theme/tokens.ts`, CSS
    custom properties, a Tailwind theme) mirrored by `docs/uiux/design-tokens.md`.
    Checklist D depends on this; the contract file records the project's decision.
-6. **No map found at all** → this is a bootstrap. Read `references/bootstrap.md` and follow
+7. **No map found at all** → this is a bootstrap. Read `references/bootstrap.md` and follow
    it instead of the checklists below.
 
 ## Step 2 — Classify the task

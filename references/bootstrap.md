@@ -58,7 +58,10 @@ The first block of the map must state the two-tier model and link the contract f
 
 ## 4. Create the contract file
 
-Place it next to the map (suggested name: `documentation-rules.md`). It records the
+Place it next to the map (suggested name: `documentation-rules.md`; the user may choose
+any name). Whatever the name, **the map header (§3) must link it** — and add a pointer
+line in `CLAUDE.md` if the project has one — because that link is how every future skill
+run locates the contract, especially under a non-default name. It records the
 **project-specific** decisions this skill will read on every future run:
 
 ```markdown
