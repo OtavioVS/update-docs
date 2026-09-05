@@ -19,6 +19,16 @@ Follow this when Step 1 of the skill found no map file. The output is three thin
    structure or simple mode, and whether to introduce a design-token set; record both
    answers in the contract file. If a company design prototype/mockup exists, record it
    as the canonical design source.
+6. **Check the existing docs against the code as you inventory.** In a project with docs
+   but no map, the highest-value output of a bootstrap is usually not the new structure —
+   it is the contradictions you surface on the way: a rule about a dependency that is no
+   longer in the manifest, a status table that never got updated, a stated threshold the
+   pipeline does not enforce. Grep the code for the load-bearing claims you read; every
+   mismatch is a finding worth more than any amount of reorganizing.
+
+   In an agent-instruction file (`CLAUDE.md` and friends) a stale claim is worse than
+   stale prose: it is loaded into every future session, so a wrong rule keeps costing.
+   Report those findings explicitly, separately from the structural work.
 
 ## 2. Choose the skeleton — sections must earn their place
 
@@ -72,6 +82,12 @@ run locates the contract, especially under a non-default name. It records the
 - **Budgets:** map ≤ <n> lines; section ≤ ~40 lines body.
 - **Last audited:** <commit hash> (<date>) — updated by every audit (skill Checklist E).
 - **Mirrors:** <none | path + policy: what stays untranslated, sync-in-same-task rule>.
+  A mirror is not always a *translation* mirror: a folder published to a wiki (Azure DevOps,
+  Confluence, GitHub wiki) is a **format/publication** mirror. Before reducing a duplicated
+  page there to a pointer, check whether repo-relative links actually resolve from the
+  published surface — usually they do not, so a pointer strands the reader who only ever sees
+  the wiki. Prefer keeping such a page whole, declare it a format mirror with a
+  same-task sync rule, and record which map sections map to which page.
 - **Deep-dive header format:** Status: CURRENT | PLAN | HISTORICAL + summary pointer.
 - **UI/UX docs:** <n/a | simple mode: docs/uiux.md | full: docs/uiux/ + screens/>.
   Token set: <path + enforcement level | declined <date>>. Canonical design source:
