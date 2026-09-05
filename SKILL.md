@@ -112,6 +112,22 @@ Work through every item; say explicitly which items were no-ops.
    And whenever you edit a map section that already carries a deep-dive pointer, open that
    deep dive's header and confirm its Status and TL;DR still match the new state — fix it
    in this same task if not (deep dives have no other freshness mechanism).
+
+   **Picking a Status when the doc is a point-in-time document** (an audit, survey, gap
+   analysis, incident write-up — anything that photographs a moment rather than describing
+   how the system works):
+
+   | Status | Use when |
+   |---|---|
+   | CURRENT | its findings still describe the system, or it is still driving open work |
+   | HISTORICAL | its findings were acted on, or a later doc explicitly supersedes it |
+   | PLAN | reserve for intent. A survey is not a plan, even when it recommends work |
+
+   Prefer evidence over vibes: a doc is HISTORICAL when *something in the repo says so* — it
+   declares itself concluded, a later doc names it as its base ("continuation of X"), or the
+   backlog item it opened is closed. When nothing settles it, leave it CURRENT, note the date
+   it photographs in the TL;DR, and say in your report that the classification is unverified.
+   A wrong HISTORICAL silently retires findings that still matter.
 5. **Promote to a top rule only if it qualifies.** If the map has a rules/invariants
    section, add an entry only when breaking the invariant fails *silently* or
    *catastrophically* AND it is non-obvious. Keep that list under ~10 entries; build
@@ -196,10 +212,14 @@ templates and the token-bootstrap procedure: `references/uiux.md`.
    - Declined → still document every UI/UX decision, in **simple mode**: one
      `docs/uiux.md` decision log (date · screen · what changed · why · values); raw
      values allowed there.
-4. **Divergences are first-class.** When the implementation deviates from a design
-   prototype/mockup, record it in the screen doc's Divergences section: what diverged,
-   why, and who decided. An undocumented divergence silently turns the prototype into a
-   false source of truth.
+4. **Divergences are first-class — and narrow.** When the implementation deviates from a
+   design prototype/mockup, record it in the screen doc's Divergences section: what
+   diverged, why, and who decided. An undocumented divergence silently turns the prototype
+   into a false source of truth. But that section holds **only** that, plus behavior that
+   contradicts what the screen itself promises. A choice the plan explicitly sanctioned, a
+   phase-sequencing note, or an architecture decision is **not** a divergence — each has
+   its own home, and padding the section buries the deviation that matters. Nothing
+   departed → write "None". What does and does not belong: `references/uiux.md` §8.
 5. **Copy is spec.** UI strings appear verbatim in the screen doc's Copy column/table;
    changing a string IS a UI/UX decision and updates the doc in the same task.
 
@@ -219,7 +239,15 @@ find undocumented changes cheaply and incrementally — not reread everything.
    Checklist B.
 4. **Sample deep dives.** For each deep dive touched by items 2–3, plus ~2 others marked
    CURRENT, check the TL;DR against the code; update it or demote Status to HISTORICAL.
-5. **Record.** Update the contract: `Last audited: <commit> (<date>)` plus one
+5. **A doc's self-declared status is a claim, not a fact.** Plans that track work in phases
+   ("wave 3 ✅", "still missing X") drift hardest, because the person who finished the work
+   rarely returns to the doc. For every phase a plan claims — done *or* pending — name the
+   artifact it implies (entity, endpoint, page, migration, test) and grep for it. Expect to
+   find errors in both directions: work marked pending that shipped, and work marked done
+   that never landed. Two independent docs describing the same item (a plan and a backlog)
+   disagreeing is a strong signal — reconcile against the code, not against the more
+   confident wording.
+6. **Record.** Update the contract: `Last audited: <commit> (<date>)` plus one
    decision-log line summarizing findings. This line is what keeps the next audit
    incremental instead of full-history.
 

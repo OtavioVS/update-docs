@@ -154,3 +154,24 @@ surfaces at all. If it does:
   **canonical design source** — Divergences sections are measured against it.
 - A project with no UI (CLI, library, service) records "UI/UX docs: n/a" in the
   contract so future runs skip Checklist D instantly.
+
+## 8. What is NOT a divergence
+
+The Divergences section is the highest-signal part of a screen doc, and the easiest to dilute.
+It holds **implementation that departs from a design/spec source**, or **behavior that contradicts
+what the screen itself promises**. Nothing else — padding it buries the deviation that matters.
+
+| Belongs in Divergences | Does NOT — and where it goes instead |
+|---|---|
+| Implementation differs from the prototype/mockup | A choice the plan explicitly **sanctioned** ("put it in A or B") — that is a decision, not a deviation |
+| Behavior contradicts the state the screen advertises | Sequencing between plan phases/waves → the plan doc |
+| Copy differs from what was specified | An architecture decision → the map |
+| A known limitation the user actually hits | A feature never promised → the backlog, if anywhere |
+
+When nothing departs, write **"None"**. An empty Divergences section is a valid, informative result —
+far better than three entries that are really decisions.
+
+> Why this rule exists: in a real run, a screen doc got three "divergences". Two were sanctioned
+> plan decisions, and the third was a misreading of the error path. The wrong entry then masked an
+> actual defect on that same code path for a full round of review — the padding did not just add
+> noise, it hid the finding.
